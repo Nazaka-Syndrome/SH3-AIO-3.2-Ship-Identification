@@ -1,0 +1,27 @@
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Cache/Temp
+*.cache
+.cache/
+temp/
+tmp/
+
+# Env
+.env
+.env.local
+
+# Node (si vous ajoutez npm)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
