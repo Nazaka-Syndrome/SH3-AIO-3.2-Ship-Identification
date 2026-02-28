@@ -123,8 +123,6 @@ Python 3.x or Node.js 14+ (for local server)
 Git (for cloning/updating)
 Data Format
 Ships are stored in ships_data.json:
-JSON
-Copy
 {
   "id": "AC4",
   "className": "AC4",
@@ -144,8 +142,6 @@ Copy
 }
 🔄 Updating the Repository
 For Users (Getting Updates)
-bash
-Copy
 # Navigate to your local folder
 cd SH3-AIO-3.2-Ship-Identification
 
@@ -157,8 +153,7 @@ git stash
 git pull origin main
 git stash pop
 For Contributors (Pushing Changes)
-bash
-Copy
+
 # 1. Check what files changed
 git status
 
@@ -171,8 +166,7 @@ git commit -m "feat: add batch file launcher and update README"
 # 4. Push to GitHub
 git push origin main
 First-Time Setup (if you haven't used Git)
-bash
-Copy
+
 # Configure your identity
 git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
@@ -180,6 +174,7 @@ git config --global user.email "your.email@example.com"
 # Clone the repository
 git clone https://github.com/Nazaka-Syndrome/SH3-AIO-3.2-Ship-Identification.git
 🐛 Troubleshooting
+
 Table
 Issue	Solution
 "Python not found"	Install Python from python.org or use Node.js
