@@ -1,6 +1,7 @@
 /**
  * SH3 SHIP RECOGNITION - Onealex Mod 3.2
  * Application JavaScript Principale avec support multilingue
+ * Chargement dynamique depuis ships_data.json
  */
 
 // Configuration
@@ -8,7 +9,8 @@ const CONFIG = {
   imagesPath: 'ships/',
   debounceDelay: 150,
   defaultLanguage: 'fr',
-  availableLanguages: ['fr', 'en', 'de']
+  availableLanguages: ['fr', 'en', 'de'],
+  dataUrl: 'ships_data.json'
 };
 
 // State
@@ -17,7 +19,8 @@ const state = {
   filteredShips: [],
   currentModalIndex: -1,
   theme: 'dark',
-  language: 'fr'
+  language: 'fr',
+  isLoading: false
 };
 
 // Ajout du convoi (hors objet)
@@ -103,13 +106,66 @@ const formatSuperstructure = (type) => {
   return types[type] || type;
 };
 
+// Charger les données depuis le JSON
+async function loadShipsData() {
+  try {
+    state.isLoading = true;
+    console.log('[APP] Chargement des données depuis', CONFIG.dataUrl);
+    
+    const response = await fetch(CONFIG.dataUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Vérifier la structure des données
+    if (!data.ships || !Array.isArray(data.ships)) {
+      throw new Error('Format de données invalide: "ships" manquant ou non valide');
+    }
+    
+    state.allShips = data.ships;
+    state.filteredShips = [...state.allShips];
+    
+    // Mettre à jour le compteur total
+    elements.resultsTotal.textContent = state.allShips.length;
+    
+    console.log(`[APP] ${state.allShips.length} navires chargés avec succès`);
+    state.isLoading = false;
+    
+    return true;
+  } catch (error) {
+    console.error('[APP] Erreur lors du chargement des données:', error);
+    state.isLoading = false;
+    
+    // Afficher un message d'erreur dans la grille
+    elements.shipsGrid.innerHTML = `
+      <div class="no-results">
+        <div class="no-results-icon">⚠️</div>
+        <div class="no-results-text">Erreur de chargement des données</div>
+        <div style="font-size: 0.9rem; margin-top: 10px; color: var(--text-muted);">
+          Vérifiez que le fichier "ships_data.json" est présent dans le dossier.
+        </div>
+        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; cursor: pointer;">
+          🔄 Réessayer
+        </button>
+      </div>
+    `;
+    
+    return false;
+  }
+}
+
 // Initialize
-function init() {
+async function init() {
   console.log('[APP] Initializing...');
   
-  // Load data from inline script
-  state.allShips = window.SHIPS_DATA || [];
-  state.filteredShips = [...state.allShips];
+  // Charger les données depuis le JSON
+  const dataLoaded = await loadShipsData();
+  if (!dataLoaded) {
+    console.error('[APP] Impossible de charger les données');
+    return;
+  }
   
   // Load saved language
   const savedLang = localStorage.getItem('sh3-language');
@@ -121,7 +177,6 @@ function init() {
     state.language = CONFIG.availableLanguages.includes(browserLang) ? browserLang : CONFIG.defaultLanguage;
   }
   
-  console.log(`[APP] Loaded ${state.allShips.length} ships`);
   console.log(`[APP] Language: ${state.language}`);
   
   // Setup event listeners

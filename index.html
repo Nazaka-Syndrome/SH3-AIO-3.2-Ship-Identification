@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Identification rapide des 224 navires marchands Silent Hunter 3 - Onealex Mod 3.2 par système de reconnaissance visuelle M/F/K">
+  <meta name="theme-color" content="#1a237e">
+  <meta name="background-color" content="#0d1117">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SH3 Ships">
+  <meta name="application-name" content="SH3 Ships">
+  <meta name="msapplication-TileColor" content="#1a237e">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+
+  <link rel="stylesheet" href="app.css">
+  <script src="translations.js"></script>
+  <base href="./">
+  
+  <title>SH3 Ship Recognition - Onealex Mod 3.2</title>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <h1 class="app-title">SH3 Ship Recognition</h1>
+    <div class="header-controls">
+      <button id="language-toggle" class="language-toggle" aria-label="Changer la langue">
+        <span id="language-text">🇫🇷 Français</span>
+      </button>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Basculer entre mode sombre et clair">
+        <span id="theme-icon">☀️</span>
+        <span id="theme-text">Mode clair</span>
+      </button>
+      <button id="btn-convoy" class="convoy-toggle">📦 Convoi</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Filters Section -->
+    <section class="filters-section" aria-label="Filtres de recherche">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="filter-code" class="filter-label">Code M/F/K</label>
+          <input type="text" id="filter-code" class="filter-input" placeholder="Ex: MF, KMF..." autocomplete="off" maxlength="10">
+        </div>
+
+        <div class="filter-group">
+          <label for="filter-funnel" class="filter-label">Position cheminée</label>
+          <select id="filter-funnel" class="filter-select">
+            <option value="">Tous</option>
+            <option value="amidship">Amidship (Au milieu)</option>
+            <option value="aft">Aft (Arrière)</option>
+            <option value="unspecified">Non spécifié</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filter-superstructure" class="filter-label">Superstructure</label>
+          <select id="filter-superstructure" class="filter-select">
+            <option value="">Tous</option>
+            <option value="composite">Composite</option>
+            <option value="split">Split</option>
+            <option value="passenger">Passenger</option>
+            <option value="unspecified">Non spécifié</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filter-ship-type" class="filter-label">Type de navire</label>
+          <select id="filter-ship-type" class="filter-select">
+            <option value="">Tous</option>
+            <option value="merchants">Marchands</option>
+            <option value="tankers">Pétroliers</option>
+            <option value="passengers">Passagers</option>
+          </select>
+        </div>
+
+        <!-- 🏗️ FILTRE ISLANDS - Checkboxes cumulatives (ET logique) -->
+        <div class="filter-group">
+          <label class="filter-label" id="filterIslandsLabel">Islands</label>
+          <div class="islands-filter">
+            <label class="island-checkbox">
+              <input type="checkbox" id="island-front" class="island-checkbox-input">
+              <span id="islandFrontLabel">Front</span>
+            </label>
+            <label class="island-checkbox">
+              <input type="checkbox" id="island-middle" class="island-checkbox-input">
+              <span id="islandMiddleLabel">Middle</span>
+            </label>
+            <label class="island-checkbox">
+              <input type="checkbox" id="island-aft" class="island-checkbox-input">
+              <span id="islandAftLabel">Aft</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="filter-actions">
+          <button id="btn-reset" class="btn-reset">
+            <span>🔄</span>
+            <span>Réinitialiser</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Counter -->
+    <div class="results-counter">
+      <span>RÉSULTATS:</span>
+      <span id="results-count" class="results-count">0</span>
+      <span>/</span>
+      <span id="results-total">224</span>
+      <span>navires</span>
+    </div>
+
+    <!-- Ships Grid -->
+    <section class="ships-container" aria-label="Grille des navires">
+      <div id="ships-grid" class="ships-grid"></div>
+    </section>
+  </main>
+
+  <!-- Ship Detail Modal -->
+  <div id="modal" class="modal-overlay" role="dialog" aria-modal="true" tabindex="-1">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-title">Détails du navire</h2>
+        <button id="modal-close" class="modal-close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-image-section">
+          <div id="modal-image-container" class="modal-image-container">
+            <img id="modal-image" class="modal-image" src="" alt="" loading="lazy">
+          </div>
+          <p class="modal-nav-hint">Cliquez sur l'image pour zoomer • Utilisez ← → pour naviguer</p>
+        </div>
+
+        <div class="modal-details">
+          <div class="detail-section">
+            <h3 class="detail-section-title">📋 Identification</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Classe</span>
+                <span id="detail-class" class="detail-value">-</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Code M/F/K</span>
+                <span id="detail-code" class="detail-value code">-</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Type</span>
+                <span id="detail-type" class="detail-value">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3 class="detail-section-title">📐 Dimensions</h3>
+            <div class="detail-grid">
+              <div class="detail-item"><span class="detail-label">Longueur</span><span id="detail-length" class="detail-value">-</span></div>
+              <div class="detail-item"><span class="detail-label">Largeur</span><span id="detail-width" class="detail-value">-</span></div>
+              <div class="detail-item"><span class="detail-label">Tirant d'eau</span><span id="detail-draft" class="detail-value">-</span></div>
+              <div class="detail-item"><span class="detail-label">Mât</span><span id="detail-mast" class="detail-value">-</span></div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3 class="detail-section-title">⚡ Performance</h3>
+            <div class="detail-grid">
+              <div class="detail-item"><span class="detail-label">Vitesse max</span><span id="detail-speed" class="detail-value">-</span></div>
+              <div class="detail-item"><span class="detail-label">Déplacement</span><span id="detail-displacement" class="detail-value">-</span></div>
+              <div class="detail-item"><span class="detail-label">Renommée</span><span id="detail-renown" class="detail-value">-</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-nav">
+        <button id="btn-prev" class="btn-nav"><span>←</span><span>Précédent</span></button>
+        <button id="btn-next" class="btn-nav"><span>Suivant</span><span>→</span></button>
+        <button id="btn-add-convoy" class="btn-nav">➕ Ajouter au convoi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Image View -->
+  <div id="image-fullscreen" class="image-fullscreen">
+    <img id="fullscreen-image" src="" alt="">
+  </div>
+
+  <script src="app.js?v=8"></script>
+</body>
+</html>
