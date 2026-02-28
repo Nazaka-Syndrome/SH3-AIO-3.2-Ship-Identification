@@ -150,7 +150,7 @@ Ship data: Onealex Mod 3.2 team
 Recognition system: M/F/K method from historical U-boat documentation
 Icons & silhouettes: SH3 community assets
 ## 📧 Support
-For issues, suggestions, or contributions:
-🐛 Open an Issue
-🍴 Fork & Pull Request
-Happy hunting, Kapitän! 🌊⚓
+For issues, suggestions, or contributions:  
+🐛 Open an Issue  
+🍴 Fork & Pull Request  
+## Happy hunting, Kapitän! 🌊⚓
