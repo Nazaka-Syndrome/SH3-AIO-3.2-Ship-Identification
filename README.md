@@ -61,25 +61,17 @@ Opera browser opens automatically at http://localhost:8080
 💡 The batch file automatically detects Python or Node.js and starts a local server
 Option 2: Manual Server Start
 With Python (3.x recommended):
-bash
-Copy
 python -m http.server 8080
 # Open http://localhost:8080 in your browser
 With Node.js:
-bash
-Copy
 npx http-server -p 8080
 # Or: npm install -g http-server && http-server -p 8080
 With PHP:
-bash
-Copy
 php -S localhost:8080
 Option 3: Direct File Open (Limited)
 Simply open index.html in a modern browser.
 ⚠️ Note: Some features (like JSON loading) may require a local server due to browser CORS policies.
 📁 Project Structure
-plain
-Copy
 SH3-AIO-3.2-Ship-Identification/
 ├── 📄 index.html              # Main application entry point
 ├── 📄 app.js                  # Core JavaScript logic
